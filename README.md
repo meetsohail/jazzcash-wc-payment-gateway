@@ -1,10 +1,9 @@
 # JazzCash WooCommerce Payment GateWay
 
 > WordPress plugin for WooCommerce Payment GateWay. 
+<img style="float:left;" width="300" src="https://woocommerce.com/wp-content/themes/woo/images/logo-woocommerce.svg" alt="WooCommerce Payment GateWay"/>
+<img style="float:right;" width="250" src="https://www.jazzcash.com.pk/assets/themes/jazzcash/img/mobilink_logo.png" alt="JazzCash WooCommerce Payment Gateway"/>
 
-  <img style="float:left;" width="300" src="https://woocommerce.com/wp-content/themes/woo/images/logo-woocommerce.svg" alt="WooCommerce Payment GateWay"/>
-  <img style="float:right;" width="250" src="https://www.jazzcash.com.pk/assets/themes/jazzcash/img/mobilink_logo.png" alt="JazzCash WooCommerce Payment Gateway"/>
-  
 ## Installation
 Download ```zip``` and directly upload to your [WordPress](https://wordpress.org) website Plugin and activate it.
 
