@@ -11,7 +11,7 @@
  * Author URI:        https://author.example.com/
  * License:           GPL v2 or later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
- * Text Domain:       jazzcash-woocommerce-payment-gateway
+ * Text Domain:       jazzcash-wc-payment-gateway
  * Domain Path:       /languages
  */
 if ( ! defined( 'ABSPATH' ) ) {

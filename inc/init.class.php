@@ -171,7 +171,6 @@ class JazzCash_WC_Payment_Gateway extends WC_Payment_Gateway
 		   wc_add_notice(  'Connection error.', 'error' );
 		   return;
 	   }   
-	 
 	}
 	
 	public function init_form_fields()
