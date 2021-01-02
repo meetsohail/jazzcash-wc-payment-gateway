@@ -9,8 +9,8 @@
  * Requires PHP:      7.0
  * Author:            Sohail Ahmed
  * Author URI:        https://github.com/meetsohail
- * License:           GPL v2 or later
- * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
+ * License:           MIT
+ * License URI:       https://choosealicense.com/licenses/mit/
  * Text Domain:       jazzcash-wc-payment-gateway
  * Domain Path:       /languages
  */
