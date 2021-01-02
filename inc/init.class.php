@@ -100,7 +100,6 @@ class JazzCash_WC_Payment_Gateway extends WC_Payment_Gateway
 		//Calculating Hash
 		$_Securehash = hash_hmac('sha256', $SortedArrayOld, $_IntegritySalt);
 		
-		//file_put_contents('abc.txt', "\n=> Request: " . $SortedArrayOld, FILE_APPEND);
 		$TxnType = get_post_meta( $order_id, $this->type, true ); // sending transaction type with the form (updated)
 
 		$jazzcash_args = array(
@@ -141,33 +140,27 @@ class JazzCash_WC_Payment_Gateway extends WC_Payment_Gateway
 			)
 		);
 		 
-		if ( is_wp_error( $response ) ) {
+		if ( is_wp_error( $response ) ) 
+		{
 			$error_message = $response->get_error_message();
 			echo "Something went wrong: $error_message";
-		} else {
+		} else 
+		{
 			echo 'Response:<pre>';
 			print_r( $response );
 			echo '</pre>';
 		}
-		if( !is_wp_error( $response ) ) {
- 
-			// $body = json_decode( $response, true );
-			
-	
-			// it could be different depending on your payment processor
-			if (wp_remote_retrieve_response_code($response) ==  200) {
-	
-			   // we received the payment
+		if( !is_wp_error( $response ) ) 
+		{
+			if (wp_remote_retrieve_response_code($response) ==  200) 
+			{
 			   $customer_order->payment_complete();
 			   $customer_order->reduce_order_stock();
 	
-			   // some notes to customer (replace true with false to make it private)
 			   $customer_order->add_order_note( 'Hey, your order is paid! Thank you!', true );
 	
-			   // Empty cart
 			   $woocommerce->cart->empty_cart();
 	
-			   // Redirect to the thank you page
 			   return array(
 				   'result' => 'success',
 				   'redirect' => $this->get_return_url( $customer_order )
@@ -177,7 +170,6 @@ class JazzCash_WC_Payment_Gateway extends WC_Payment_Gateway
 			   wc_add_notice(   "Something went wrong:". $response->get_error_message(), 'error' );
 			   return;
 		   }
-	
 	   } else {
 		   wc_add_notice(  'Connection error.', 'error' );
 		   return;

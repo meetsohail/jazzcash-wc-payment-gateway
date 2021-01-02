@@ -31,16 +31,23 @@ class JazzCash_Woocommerce_Payment_Gateway
         define("JAZZCASH_DIR_PATH_JS", plugin_dir_url( __FILE__ )."js/");
         define("JAZZCASH_URL", plugins_url('', __FILE__));
         /**
-             * Check if WooCommerce is active
-             **/
-            if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ) ) ) {
-                // Put your plugin code here
-            }
-        add_action( 'plugins_loaded', array($this,'jazzcash_wc_gateway_class') );
-        add_filter( 'woocommerce_payment_gateways', array($this, 'jazzcash_wc_payment_gateway') );
-        add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), array($this, 'jazzcash_wc_action_links') );
-        add_action('admin_notices', array($this, 'jazzcash_wc_ssl_check'));
-        add_action('woocommerce_receipt_jazzcash', array($this, 'jazzcash_wc_receipt_page'));
+            * Check if WooCommerce is active
+        **/
+        if ( !in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ) ) ) {
+            add_action('admin_notices', array($this, 'jazzcash_wc_woocommerce_check'));
+        }else
+        {  
+            add_action( 'plugins_loaded', array($this,'jazzcash_wc_gateway_class') );
+            add_filter( 'woocommerce_payment_gateways', array($this, 'jazzcash_wc_payment_gateway') );
+            add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), array($this, 'jazzcash_wc_action_links') );
+            add_action('admin_notices', array($this, 'jazzcash_wc_ssl_check'));
+            add_action('woocommerce_receipt_jazzcash', array($this, 'jazzcash_wc_receipt_page'));
+        }
+    }
+
+    function jazzcash_wc_woocommerce_check()
+    {
+        echo "<div class=\"error\"><p>" . __("Make Sure WooCommerce is installed to use JazzCash WooCommerce Payment GateWay Plugin")."</p></div>";
     }
     
     function jazzcash_wc_gateway_class()
