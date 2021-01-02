@@ -7,7 +7,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 class JazzCash_WC_Payment_Gateway extends WC_Payment_Gateway 
 {
 	public $type = 'MPAY'; 
-	public $endpoint = 'https://sandbox.jazzcash.com.pk/ApplicationAPI/API/2.0/Purchase/DoMWalletTransaction';
+	public $test_endpoint = 'https://sandbox.jazzcash.com.pk/ApplicationAPI/API/2.0/Purchase/DoMWalletTransaction';
+	public $live_endpoint = 'https://sandbox.jazzcash.com.pk/ApplicationAPI/API/2.0/Purchase/DoMWalletTransaction';
 
     public function __construct()
     {
@@ -32,17 +33,12 @@ class JazzCash_WC_Payment_Gateway extends WC_Payment_Gateway
 		$this->password = $this->get_option( 'password' );
 		$this->integenty_salt =  $this->get_option( 'integenty_salt' );
 		$this->return_url =  $this->get_option( 'return_url' );
-		// print_r(get_alloptions());
-		add_action( 'wp_enqueue_scripts', array( $this, 'payment_scripts' ) );
+		
 		add_action( 'wp_enqueue_scripts', array($this, 'jazzcash_wc_adding_scripts') );
 		add_action( 'wp_enqueue_scripts', array($this, 'jazzcash_wc_adding_styles') );
 		add_action('woocommerce_update_options_payment_gateways_' . $this->id, array($this,
 		'process_admin_options'));
-	// add_action('woocommerce_checkout_process', array($this,'jazzcash_wc_checkout_field_validation'));
-
-		// add_action('woocommerce_update_options_payment_gateways', array(&$this, 'process_admin_options'));
-		// add_action('woocommerce_update_options_shipping_methods', array(&$this, 'process_admin_options'));
-
+		add_action('woocommerce_after_checkout_validation', array($this,'jazzcash_wc_checkout_field_validation'));
 	}
 
 	public function process_payment( $order_id ) {
@@ -117,7 +113,7 @@ class JazzCash_WC_Payment_Gateway extends WC_Payment_Gateway
 			'pp_TxnDateTime' => $_TxnDateTime,
 			'pp_BillReference' => $_BillReference,
 			'pp_Description' => $_Description,
-			'pp_TxnExpiryDateTime' => $_ExpiryDateTime,
+			'pp_TranExpiryDateTime' => $_ExpiryDateTime,
 			'pp_ReturnURL' => $_ReturnURL,
 			'pp_SecureHash' => $_Securehash,
 			'ppmpf_1' => $ppmpf1,
@@ -128,7 +124,8 @@ class JazzCash_WC_Payment_Gateway extends WC_Payment_Gateway
 			'pp_MobileNumber'=>$_PhoneNumber,
 			'pp_CNIC'	=>	$_CnicNumber
 		);
-		$response = wp_remote_post( $this->endpoint, array(
+		$endpoint = $this->enabled === "yes" ? $this->test_endpoint : $live_endpoint; 
+		$response = wp_remote_post( $endpoint, array(
 			'method'      => 'POST',
 			'timeout'     => 120,
 			'redirection' => 5,
@@ -139,7 +136,7 @@ class JazzCash_WC_Payment_Gateway extends WC_Payment_Gateway
 			'cookies'     => array()
 			)
 		);
-		 
+		
 		if ( is_wp_error( $response ) ) 
 		{
 			$error_message = $response->get_error_message();
@@ -190,15 +187,12 @@ class JazzCash_WC_Payment_Gateway extends WC_Payment_Gateway
 			'title' => array(
 				'title'       => 'Title',
 				'type'        => 'text',
-				'description' => 'This controls the title which the user sees during checkout.',
-				'default'     => 'Credit Card',
-				'desc_tip'    => true,
+				'default'     => 'JazzCash Mobile Account'
 			),
 			'description' => array(
 				'title'       => 'Description',
 				'type'        => 'textarea',
-				'description' => 'This controls the description which the user sees during checkout.',
-				'default'     => 'Pay with your JazzCash Mobile account or credit card or Voucher via our super-cool payment gateway.',
+				'default'     => 'Pay with your JazzCash Mobile account via our super-cool payment gateway.',
 			),
 			'testmode' => array(
 				'title'       => 'Enable JazzCash sandbox',
@@ -211,33 +205,25 @@ class JazzCash_WC_Payment_Gateway extends WC_Payment_Gateway
 			'merchant_id' => array(
 				'title'       => 'Merchant ID',
 				'type'        => 'text',
-				'desc_tip'    => true,
+				// 'desc_tip'    => true,
 				'required'	  => true,
-				'description' => 'Place the payment gateway in test mode using test API keys. Make Sure to uncheck if you are using Live, ',
+				'description' => 'Make Sure to copy proper merchant id from JazzCash Developer portal. <a href="https://sandbox.jazzcash.com.pk/MerchantDashboard/Login">JazzCash</a>',
 			),
 			'password' => array(
 				'title'       => 'Password',
-				'type'        => 'password',
-				'desc_tip'    => true,
-				'description' => 'Place the payment gateway in test mode using test API keys. Make Sure to uncheck if you are using Live, ',
+				'type'        => 'password'
 			),
 			'integenty_salt' => array(
 				'title'       => 'Integenty Salt',
 				'type'        => 'text',
 				'desc_tip'    => true,
-				'description' => 'Place the payment gateway in test mode using test API keys. Make Sure to uncheck if you are using Live, ',
+				'description' => 'Copy Integenty Salt from JazzCash developer portal.',
 			),
 			'return_url' => array(
 				'title'       => 'Return URL',
 				'type'        => 'text',
-				'desc_tip'    => true,
-				'description' => 'Place the payment gateway in test mode using test API keys. Make Sure to uncheck if you are using Live, ',
-			),
-			'return_url' => array(
-				'title'       => 'Expire Hours',
-				'type'        => 'number',
-				'desc_tip'    => true,
-				'description' => 'Place the payment gateway in test mode using test API keys. Make Sure to uncheck if you are using Live, ',
+				'placeholder'	=>	site_url('checkout/order-received/'),
+				'description' => 'Make Sure to add return url based on your setting.',
 			),
 			'expiryHours' => array(
                 'title' => __('Transaction Expiry (Hours)', 'jazzcash'),
@@ -247,10 +233,7 @@ class JazzCash_WC_Payment_Gateway extends WC_Payment_Gateway
                 ),
 		);
 	} 
-	public function payment_scripts()
-	{
 
-	}
 	public function payment_fields(){ // added form for trancastion type (updated)
 
 		if ( $description = $this->get_description() ) {
@@ -258,35 +241,32 @@ class JazzCash_WC_Payment_Gateway extends WC_Payment_Gateway
 		}
 		if($this->testmode)
 		{
-			echo "<span style='background:red; padding: 5px; color:white;'>Test Mood</span>";
+			echo "<span class='jazzcash_alert jazzcash_alert-danger'>Test Mode has been enabled!</span>";
+			echo "<h4>Test JazzCash Mobile Accounts!</h4>";
 			echo '<table class="gatewayResponseCodesTable">
-			<tbody><tr>
-				<th>
-					Mobile Number
-				</th>
-				<th>
-					Last 6 Digits of CNIC
-				</th>
-				<th>
-					Response
-				</th>
-			</tr>
-			<tr>
-				<td>03123456789</td>
-				<td>345678</td>
-				<td>Successful</td>
-			</tr>
-			<tr>
-				<td>03123456780</td>
-				<td>345678</td>
-				<td>Authentication Error</td>
-			</tr>
-			<tr>
-				<td>Others</td>
-				<td>345678</td>
-				<td>Pending</td>
-			</tr>
-		</tbody></table>';
+					<tbody>
+						<tr>
+							<th>Mobile Number</th>
+							<th>Last 6 Digits of CNIC</th>
+							<th>Response</th>
+						</tr>
+						<tr>
+							<td>03123456789</td>
+							<td>345678</td>
+							<td>Successful</td>
+						</tr>
+						<tr>
+							<td>03123456780</td>
+							<td>345678</td>
+							<td>Authentication Error</td>
+						</tr>
+						<tr>
+							<td>Others</td>
+							<td>345678</td>
+							<td>Pending</td>
+						</tr>
+					</tbody>
+				</table>';
 		}
 		$plugins_url = plugins_url();
 		$my_plugin = $plugins_url . '/jazzcash-woocommerce-gateway';
@@ -303,8 +283,12 @@ class JazzCash_WC_Payment_Gateway extends WC_Payment_Gateway
 		wp_register_style('jazzcash_wc_stylesheet', JAZZCASH_DIR_PATH_CSS.'jazzcash-buttons.css');
 		wp_enqueue_style('jazzcash_wc_stylesheet');
 	}
+
+	/* 
+		* Validation of Payment Form on Checkout Page 
+	*/
 	function jazzcash_wc_checkout_field_validation() {
-		if ( $_POST['payment_method'] === 'jazzcash-wc-payment-gateway' && isset($_POST['phone_number']) && empty($_POST['cnic']) )
+		if ( $_POST['payment_method'] === 'jazzcash-wc-payment-gateway' && isset($_POST['phone_number']) && empty($_POST['cnic']) ){
 			if(!$_POST['phone_number'] || empty($_POST['phone_number']))
 			{
 				wc_add_notice( __( 'Please enter your jazzcash account phone number.' ), 'error' );
@@ -315,6 +299,7 @@ class JazzCash_WC_Payment_Gateway extends WC_Payment_Gateway
 				wc_add_notice( __( 'Please enter your last 6 digits of CNIC.' ), 'error' );
 				return false;
 			}
+		}
 	}
 }
 
