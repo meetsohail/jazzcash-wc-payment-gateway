@@ -5,7 +5,6 @@
 <p align="left">
   <img width="250" src="https://woocommerce.com/wp-content/themes/woo/images/logo-woocommerce.svg" alt="WooCommerce Payment GateWay"/>
 </p>
-<br>
 <p align="right">
   <img width="250" src="https://www.jazzcash.com.pk/assets/themes/jazzcash/img/mobilink_logo.png" alt="JazzCash WooCommerce Payment Gateway"/>
 </p>
