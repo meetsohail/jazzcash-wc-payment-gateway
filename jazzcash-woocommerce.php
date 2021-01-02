@@ -63,7 +63,8 @@ class JazzCash_Woocommerce_Payment_Gateway
         return $methods;
     }
      
-    function jazzcash_wc_action_links( $links ) {
+    function jazzcash_wc_action_links( $links ) 
+    {
 	    $plugin_links = array(
 		    '<a href="' . admin_url( 'admin.php?page=wc-settings&tab=checkout' ) . '">' . __( 'Settings', 'jazzcash' ) . '</a>',
 	    );
@@ -72,8 +73,10 @@ class JazzCash_Woocommerce_Payment_Gateway
     
     public function jazzcash_wc_ssl_check()
     {
-	    if ($this->enabled == "yes") {
-            if (get_option('woocommerce_force_ssl_checkout') == "no") {
+        if ($this->enabled == "yes") 
+        {
+            if (get_option('woocommerce_force_ssl_checkout') == "no") 
+            {
                 echo "<div class=\"error\"><p>" . sprintf(__("<strong>%s</strong> is enabled and WooCommerce is not forcing the SSL certificate on your checkout page. Please ensure that you have a valid SSL certificate and that you are <a href=\"%s\">forcing the checkout pages to be secured.</a>"),
                     $this->method_title, admin_url('admin.php?page=wc-settings&tab=checkout')) .
                     "</p></div>";
@@ -81,18 +84,19 @@ class JazzCash_Woocommerce_Payment_Gateway
         }
     }
 
-    function jazzcash_wc_receipt_page($order){
-        //file_put_contents('abc.txt', "receipt_page called".PHP_EOL, FILE_APPEND);
+    function jazzcash_wc_receipt_page($order)
+    {
         echo '<p>'.__('Please wait while your are being redirected to JazzCash...', 'jazzcash').'</p>';
         $plugins_url = plugins_url();
         $my_plugin = $plugins_url . '/jazzcash-woocommerce-gateway';
         echo '<p><img src="'.$my_plugin.'/assets/jazz-cash.png" /></p>';
         echo $this->generate_jazzcash_form($order);
     }
-    public function generate_jazzcash_form($order_id){
+    public function generate_jazzcash_form($order_id)
+    {
            
             
-        }
+    }
         
 }
 new JazzCash_Woocommerce_Payment_Gateway();
