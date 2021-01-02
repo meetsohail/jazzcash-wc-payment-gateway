@@ -41,10 +41,9 @@ class JazzCash_WC_Payment_Gateway extends WC_Payment_Gateway
 		add_action('woocommerce_after_checkout_validation', array($this,'jazzcash_wc_checkout_field_validation'));
 	}
 
-	public function process_payment( $order_id ) {
- 
+	public function process_payment( $order_id ) 
+	{
 		global $woocommerce;
-    
 		$customer_order = new WC_Order($order_id);
 		
 		$_ActionURL     = $this->actionURL;
@@ -141,7 +140,8 @@ class JazzCash_WC_Payment_Gateway extends WC_Payment_Gateway
 		{
 			$error_message = $response->get_error_message();
 			echo "Something went wrong: $error_message";
-		} else 
+		} 
+		else 
 		{
 			echo 'Response:<pre>';
 			print_r( $response );
@@ -163,14 +163,18 @@ class JazzCash_WC_Payment_Gateway extends WC_Payment_Gateway
 				   'redirect' => $this->get_return_url( $customer_order )
 			   );
 	
-			} else {
-			   wc_add_notice(   "Something went wrong:". $response->get_error_message(), 'error' );
+			} 
+			else 
+			{
+				wc_add_notice(   "Something went wrong:". $response->get_error_message(), 'error' );
 			   return;
-		   }
-	   } else {
-		   wc_add_notice(  'Connection error.', 'error' );
-		   return;
-	   }   
+		   	}
+	   	} 
+	   	else 
+		{
+			wc_add_notice(  'Connection error.', 'error' );
+			return;
+		}   
 	}
 	
 	public function init_form_fields()
@@ -233,9 +237,11 @@ class JazzCash_WC_Payment_Gateway extends WC_Payment_Gateway
 		);
 	} 
 
-	public function payment_fields(){ // added form for trancastion type (updated)
+	public function payment_fields()
+	{ // added form for trancastion type (updated)
 
-		if ( $description = $this->get_description() ) {
+		if ( $description = $this->get_description() ) 
+		{
 			echo wpautop( wptexturize( $description ) );
 		}
 		if($this->testmode)
@@ -273,12 +279,14 @@ class JazzCash_WC_Payment_Gateway extends WC_Payment_Gateway
 		include_once(JAZZCASH_DIR_PATH_INC.'partials/front.php');
 	}
 	
-	function jazzcash_wc_adding_scripts() {
+	function jazzcash_wc_adding_scripts() 
+	{
 		wp_register_script('jazzcash_wc_scripts', JAZZCASH_DIR_PATH_JS.'jazzcash-buttons.js'); 		
 		wp_enqueue_script('jazzcash_wc_scripts');
 	}
 
-	function jazzcash_wc_adding_styles() {
+	function jazzcash_wc_adding_styles() 
+	{
 		wp_register_style('jazzcash_wc_stylesheet', JAZZCASH_DIR_PATH_CSS.'jazzcash-buttons.css');
 		wp_enqueue_style('jazzcash_wc_stylesheet');
 	}
@@ -286,8 +294,10 @@ class JazzCash_WC_Payment_Gateway extends WC_Payment_Gateway
 	/* 
 		* Validation of Payment Form on Checkout Page 
 	*/
-	function jazzcash_wc_checkout_field_validation() {
-		if ( $_POST['payment_method'] === 'jazzcash-wc-payment-gateway' && isset($_POST['phone_number']) && empty($_POST['cnic']) ){
+	function jazzcash_wc_checkout_field_validation() 
+	{
+		if ( $_POST['payment_method'] === 'jazzcash-wc-payment-gateway' && isset($_POST['phone_number']) && empty($_POST['cnic']) )
+		{
 			if(!$_POST['phone_number'] || empty($_POST['phone_number']))
 			{
 				wc_add_notice( __( 'Please enter your jazzcash account phone number.' ), 'error' );
