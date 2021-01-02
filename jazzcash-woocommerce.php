@@ -3,12 +3,12 @@
 /**
  * Plugin Name:       JazzCash - WC Payment GateWay
  * Plugin URI:        https://example.com/plugins/the-basics/
- * Description:       Handle the basics with this plugin.
+ * Description:       JazzCash WordPress Payment Gateway plugin.
  * Version:           1.0
  * Requires at least: 5.2
- * Requires PHP:      7.2
+ * Requires PHP:      7.0
  * Author:            Sohail Ahmed
- * Author URI:        https://author.example.com/
+ * Author URI:        https://github.com/meetsohail
  * License:           GPL v2 or later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain:       jazzcash-wc-payment-gateway
@@ -30,12 +30,14 @@ class JazzCash_Woocommerce_Payment_Gateway
         define("JAZZCASH_DIR_PATH_CSS", plugin_dir_url( __FILE__ )."css/");
         define("JAZZCASH_DIR_PATH_JS", plugin_dir_url( __FILE__ )."js/");
         define("JAZZCASH_URL", plugins_url('', __FILE__));
+        
         /**
             * Check if WooCommerce is active
         **/
         if ( !in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ) ) ) {
             add_action('admin_notices', array($this, 'jazzcash_wc_woocommerce_check'));
-        }else
+        }
+        else
         {  
             add_action( 'plugins_loaded', array($this,'jazzcash_wc_gateway_class') );
             add_filter( 'woocommerce_payment_gateways', array($this, 'jazzcash_wc_payment_gateway') );
