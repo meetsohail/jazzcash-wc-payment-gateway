@@ -3,11 +3,11 @@
 > WordPress plugin for WooCommerce Payment GateWay. 
 
 <p align="left">
-  <img width="400" src="https://woocommerce.com/wp-content/themes/woo/images/logo-woocommerce.svg" alt="WooCommerce Payment GateWay"/>
+  <img width="250" src="https://woocommerce.com/wp-content/themes/woo/images/logo-woocommerce.svg" alt="WooCommerce Payment GateWay"/>
 </p>
 <br>
 <p align="right">
-  <img width="400" src="https://www.jazzcash.com.pk/assets/themes/jazzcash/img/mobilink_logo.png" alt="JazzCash WooCommerce Payment Gateway"/>
+  <img width="250" src="https://www.jazzcash.com.pk/assets/themes/jazzcash/img/mobilink_logo.png" alt="JazzCash WooCommerce Payment Gateway"/>
 </p>
 
 ![JazzCash]()
