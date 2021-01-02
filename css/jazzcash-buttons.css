@@ -1,0 +1,90 @@
+/* CSS Document */
+.blockUI {
+    display: none !important;
+}
+.hide-jazzCash {
+  display: none;
+}
+.text-for-jc{
+	background: #fff;
+    padding: 10px;
+    font-size: 12px;
+    font-weight: bold;
+    font-family: arial;
+    border: 1px solid #999;
+	margin-bottom:15px;
+	}
+/************************************/
+.container-jc {
+    display: block;
+    position: relative;
+    padding-left: 35px;
+    padding-bottom: 15px;
+    cursor: pointer;
+    font-size: 13px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+label#lable_MWALLET {
+    padding-bottom: 20px;
+}
+/* Hide the browser's default radio button */
+.container-jc input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+}
+
+/* Create a custom radio button */
+.checkmark {
+    position: absolute;
+    top: 0;
+    left: 0;
+    
+    /*background: url(../modules/jazzcash/sh.png) left center no-repeat;*/
+}
+#lable_MWALLET .checkmark {
+	height: 36px;
+    width: 30px;
+	}
+#lable_OTC .checkmark {
+	height: 27px;
+    width: 30px;
+	}
+#lable_MIGS .checkmark {
+	height: 36px;
+    width: 30px;
+	}		
+/* On mouse-over, add a grey background color */
+.container-jc:hover input ~ .checkmark {
+    background-color: #ccc;
+}
+
+/* When the radio button is checked, add a blue background */
+.container-jc input:checked ~ .checkmark {
+    background-color: #2196F3;
+}
+
+/* Create the indicator (the dot/circle - hidden when not checked) */
+.checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+}
+
+/* Show the indicator (dot/circle) when checked */
+.container-jc input:checked ~ .checkmark:after {
+    display: block;
+}
+
+/* Style the indicator (dot/circle) */
+.container-jc .checkmark:after {
+ 	top: 9px;
+	left: 9px;
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	/*background: white;*/
+}
