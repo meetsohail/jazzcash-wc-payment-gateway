@@ -56,7 +56,7 @@ class JazzCash_WC_Payment_Gateway extends WC_Payment_Gateway
 		$_Password      = $this->password;
 		$_ReturnURL     = $this->return_url;
 		$_IntegritySalt = $this->integenty_salt;
-		$_ExpiryHours   = $this->expiryHours ? $this->expiryHours : 12;
+		$_ExpiryHours   = $this->expiryHours;
 		$_PhoneNumber   = $_POST['phone_number'];
 		$_CnicNumber	= $_POST['cnic'];
 		$items = $customer_order->get_items();
@@ -246,7 +246,13 @@ class JazzCash_WC_Payment_Gateway extends WC_Payment_Gateway
 				'type'        => 'number',
 				'desc_tip'    => true,
 				'description' => 'Place the payment gateway in test mode using test API keys. Make Sure to uncheck if you are using Live, ',
-			)
+			),
+			'expiryHours' => array(
+                'title' => __('Transaction Expiry (Hours)', 'jazzcash'),
+                'type' => 'number',
+                'desc_tip' => __('Transaction Expiry (Hours)', 'jazzcash'),
+				'default' => __('12', 'jazzcash')
+                ),
 		);
 	} 
 	public function payment_scripts()
