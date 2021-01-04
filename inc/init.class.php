@@ -136,15 +136,18 @@ class JazzCash_WC_Payment_Gateway extends WC_Payment_Gateway
 			)
 		);
 		$jazzcash_response = json_decode($response['body']);
+		
 		if($jazzcash_response->pp_ResponseCode > 000)
 		{
 			wc_add_notice(  $jazzcash_response->pp_ResponseMessage, 'error' );
+			return;
 		}
 
 		if ( is_wp_error( $response )) 
 		{
 			$error_message = $response->get_error_message();
 			wc_add_notice(  'Something went wrong: '.$response->get_error_message(), 'error' );
+			return;
 		} 
 		else 
 		{
@@ -157,13 +160,13 @@ class JazzCash_WC_Payment_Gateway extends WC_Payment_Gateway
 		{
 			if (wp_remote_retrieve_response_code($response) ==  200) 
 			{
-			   $customer_order->payment_complete();
-			   $customer_order->reduce_order_stock();
-	
-			   $customer_order->add_order_note( 'Hey, your order is paid! Thank you!', true );
-	
-			   $woocommerce->cart->empty_cart();
-	
+				$customer_order->payment_complete();
+				$customer_order->reduce_order_stock();
+		
+				$customer_order->add_order_note( 'Hey, your order is paid! Thank you!', true );
+				$customer_order->add_
+				$woocommerce->cart->empty_cart();
+		
 			   return array(
 				   'result' => 'success',
 				   'redirect' => $this->get_return_url( $customer_order )
