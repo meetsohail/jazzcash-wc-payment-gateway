@@ -52,8 +52,8 @@ class JazzCash_WC_Payment_Gateway extends WC_Payment_Gateway
 		$_ReturnURL     = $this->return_url;
 		$_IntegritySalt = $this->integenty_salt;
 		$_ExpiryHours   = $this->expiryHours;
-		$_PhoneNumber   = $_POST['phone_number'];
-		$_CnicNumber	= $_POST['cnic'];
+		$_PhoneNumber   = sanitize_text_field($_POST['phone_number']);
+		$_CnicNumber	= sanitize_text_field($_POST['cnic']);
 		$items = $customer_order->get_items();
 		$product_name  = array();
 		foreach ( $items as $item ) {
@@ -149,13 +149,7 @@ class JazzCash_WC_Payment_Gateway extends WC_Payment_Gateway
 			wc_add_notice(  'Something went wrong: '.$response->get_error_message(), 'error' );
 			return;
 		} 
-		else 
-		{
-			echo 'Response:<pre>';
-			print_r( $response );
-			print_r($jazzcash_response);
-			echo '</pre>';
-		}
+		
 		if( !is_wp_error( $response ) ) 
 		{
 			if (wp_remote_retrieve_response_code($response) ==  200) 
@@ -164,7 +158,7 @@ class JazzCash_WC_Payment_Gateway extends WC_Payment_Gateway
 				$customer_order->reduce_order_stock();
 		
 				$customer_order->add_order_note( 'Hey, your order is paid! Thank you!', true );
-				$customer_order->add_
+				// $customer_order->add_meta
 				$woocommerce->cart->empty_cart();
 		
 			   return array(
@@ -305,14 +299,14 @@ class JazzCash_WC_Payment_Gateway extends WC_Payment_Gateway
 	*/
 	function jazzcash_wc_checkout_field_validation() 
 	{
-		if ( $_POST['payment_method'] == 'jazzcash-wc-payment-gateway')
+		if ( sanitize_text_field($_POST['payment_method']) == 'jazzcash-wc-payment-gateway')
 		{
-			if(empty($_POST['phone_number']))
+			if(empty(sanitize_text_field($_POST['phone_number'])))
 			{
 				wc_add_notice( __( 'Please enter your jazzcash account number.' ), 'error' );
 				return false;
 			}
-			if(empty($_POST['cnic']))
+			if(empty(sanitize_text_field($_POST['cnic'])))
 			{
 				wc_add_notice( __( 'Please enter your last 6 digits of CNIC.' ), 'error' );
 				return false;
