@@ -34,17 +34,27 @@ class JazzCash_Woocommerce_Payment_Gateway
         /**
             * Check if WooCommerce is active
         **/
-        if ( !in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ) ) ) {
+        if ( !in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ) ) ) 
+        {
             add_action('admin_notices', array($this, 'jazzcash_wc_woocommerce_check'));
         }
+        /**
+            * Check if Currency is PKR 
+        **/
+        else if(apply_filters( 'woocommerce_currency', get_option( 'woocommerce_currency' ) ) != 'PKR')
+        {
+            add_action('admin_notices', array($this, 'jazzcash_wc_currency_check'));
+        }
+        /**
+            * Activate Plugin Successfully 
+        **/
         else
         {  
             add_action( 'plugins_loaded', array($this,'jazzcash_wc_gateway_class') );
             add_filter( 'woocommerce_payment_gateways', array($this, 'jazzcash_wc_payment_gateway') );
             add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), array($this, 'jazzcash_wc_action_links') );
             add_action('admin_notices', array($this, 'jazzcash_wc_ssl_check'));
-            add_action('woocommerce_receipt_jazzcash', array($this, 'jazzcash_wc_receipt_page'));
-            add_action( 'woocommerce_before_thankyou', array($this,'success_message_after_payment') );
+            add_action( 'woocommerce_before_thankyou', array($this,'jazzcash_wc_success_message_after_payment') );
         }
     }
 
@@ -53,6 +63,10 @@ class JazzCash_Woocommerce_Payment_Gateway
         echo "<div class=\"error\"><p>" . __("Make Sure WooCommerce is installed to use JazzCash WooCommerce Payment GateWay Plugin")."</p></div>";
     }
     
+    function jazzcash_wc_currency_check()
+    {
+        echo "<div class=\"error\"><p>" . __("JazzCash only Proccessess Pakistani PKR currency.")."</p></div>";
+    }
     function jazzcash_wc_gateway_class()
     {
         require_once(JAZZCASH_DIR_PATH_INC."init.class.php");
@@ -63,7 +77,10 @@ class JazzCash_Woocommerce_Payment_Gateway
         $methods[] = 'JazzCash_WC_Payment_Gateway'; 
         return $methods;
     }
-     
+
+    /**
+        * Add Setting Link on plugins page.
+    **/
     function jazzcash_wc_action_links( $links ) 
     {
 	    $plugin_links = array(
@@ -72,6 +89,9 @@ class JazzCash_Woocommerce_Payment_Gateway
         return array_merge( $plugin_links, $links );	
     }
     
+    /**
+        * Check SSL.
+    **/
     public function jazzcash_wc_ssl_check()
     {
         if ($this->enabled == "yes") 
@@ -85,26 +105,15 @@ class JazzCash_Woocommerce_Payment_Gateway
         }
     }
 
-    function jazzcash_wc_receipt_page($order)
+    /**
+        * Shows success message on thank you page.
+    **/
+    function jazzcash_wc_success_message_after_payment( $order_id )
     {
-        echo '<p>'.__('Please wait while your are being redirected to JazzCash...', 'jazzcash').'</p>';
-        $plugins_url = plugins_url();
-        $my_plugin = $plugins_url . '/jazzcash-woocommerce-gateway';
-        echo '<p><img src="'.$my_plugin.'/assets/jazz-cash.png" /></p>';
-        echo $this->generate_jazzcash_form($order);
-    }
-    public function generate_jazzcash_form($order_id)
-    {
-           
-            
-    }
-    
-    function success_message_after_payment( $order_id ){
         // Get the WC_Order Object
         $order = wc_get_order( $order_id );
-    
         if ( $order->has_status('processing') ){
-            wc_print_notice( __("Your payment has been successful", "woocommerce"), "success" );
+            wc_print_notice( __("Your payment has been successful!", "woocommerce"), "success" );
         }
     }
     

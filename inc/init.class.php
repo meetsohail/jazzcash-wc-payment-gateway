@@ -11,11 +11,6 @@ class JazzCash_WC_Payment_Gateway extends WC_Payment_Gateway
 	protected $test_endpoint = 'https://sandbox.jazzcash.com.pk/ApplicationAPI/API/2.0/Purchase/DoMWalletTransaction';
 	
 	protected $live_endpoint = 'https://production.jazzcash.com.pk/ApplicationAPI/API/2.0/Purchase/DoMWalletTransaction';
-	
-	protected $jazzcash_mobile_account;
-	
-	protected $jazzcash_cnic;
-
 
 	public function __construct()
     {
@@ -168,7 +163,7 @@ class JazzCash_WC_Payment_Gateway extends WC_Payment_Gateway
 		if ( is_wp_error( $response )) 
 		{
 			$error_message = $response->get_error_message();
-			wc_add_notice(  'Something went wrong: '.$response->get_error_message(), 'error' );
+			wc_add_notice(  __('Something went wrong: ').$response->get_error_message(), 'error' );
 			return;
 		} 
 		
@@ -180,7 +175,7 @@ class JazzCash_WC_Payment_Gateway extends WC_Payment_Gateway
 				$customer_order->payment_complete();
 				$customer_order->reduce_order_stock();
 		
-				$customer_order->add_order_note( 'Hey, your order is paid! Thank you!', true );
+				$customer_order->add_order_note( __('Hey, your order is paid! Thank you!'), true );
 	
 				$woocommerce->cart->empty_cart();
 		
@@ -192,17 +187,17 @@ class JazzCash_WC_Payment_Gateway extends WC_Payment_Gateway
 			} 
 			else 
 			{
-				wc_add_notice(   "Something went wrong:". $response->get_error_message(), 'error' );
+				wc_add_notice(   __("Something went wrong:"). $response->get_error_message(), 'error' );
 			   return;
 		   	}
 	   	} 
 	   	else 
 		{
-			wc_add_notice(  'Connection error.', 'error' );
+			wc_add_notice(  __('Connection error.'), 'error' );
 			return;
 		}   
 	}
-	
+
 	function jazzcash_wc_custom_checkout_field_update_order_meta($order_id)
 	{
 		update_post_meta( $order_id, 'jazzcash_mobile_account', sanitize_text_field($_POST['phone_number']) );
