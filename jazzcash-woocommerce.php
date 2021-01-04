@@ -44,6 +44,7 @@ class JazzCash_Woocommerce_Payment_Gateway
             add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), array($this, 'jazzcash_wc_action_links') );
             add_action('admin_notices', array($this, 'jazzcash_wc_ssl_check'));
             add_action('woocommerce_receipt_jazzcash', array($this, 'jazzcash_wc_receipt_page'));
+            add_action( 'woocommerce_before_thankyou', array($this,'success_message_after_payment') );
         }
     }
 
@@ -97,7 +98,16 @@ class JazzCash_Woocommerce_Payment_Gateway
            
             
     }
-        
+    
+    function success_message_after_payment( $order_id ){
+        // Get the WC_Order Object
+        $order = wc_get_order( $order_id );
+    
+        if ( $order->has_status('processing') ){
+            wc_print_notice( __("Your payment has been successful", "woocommerce"), "success" );
+        }
+    }
+    
 }
 new JazzCash_Woocommerce_Payment_Gateway();
 

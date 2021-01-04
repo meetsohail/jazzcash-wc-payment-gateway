@@ -8,7 +8,7 @@ class JazzCash_WC_Payment_Gateway extends WC_Payment_Gateway
 {
 	public $type = 'MPAY'; 
 	public $test_endpoint = 'https://sandbox.jazzcash.com.pk/ApplicationAPI/API/2.0/Purchase/DoMWalletTransaction';
-	public $live_endpoint = 'https://sandbox.jazzcash.com.pk/ApplicationAPI/API/2.0/Purchase/DoMWalletTransaction';
+	public $live_endpoint = 'https://production.jazzcash.com.pk/ApplicationAPI/API/2.0/Purchase/DoMWalletTransaction';
 
     public function __construct()
     {
@@ -16,7 +16,7 @@ class JazzCash_WC_Payment_Gateway extends WC_Payment_Gateway
 		$this->icon = JAZZCASH_DIR_PATH_IMAGES."jazzcash-logo-200x200.png";
 		$this->has_fields = true;
 		$this->method_title = "JazzCash";
-		$this->method_description = "JazzCash Payment Gateway gets through jazzcash account or any credit card to enter their payment information.	";
+		$this->method_description = __("JazzCash Payment Gateway gets through jazzcash account or any credit card to enter their payment information.	", 'jazzcash_woocommerce_integration_gateway');
 		$this->title = __( "JazzCash Payment Gateway", 'jazzcash_woocommerce_integration_gateway' );
 		
 		$this->supports = array(
@@ -135,16 +135,22 @@ class JazzCash_WC_Payment_Gateway extends WC_Payment_Gateway
 			'cookies'     => array()
 			)
 		);
-		
-		if ( is_wp_error( $response ) ) 
+		$jazzcash_response = json_decode($response['body']);
+		if($jazzcash_response->pp_ResponseCode > 000)
+		{
+			wc_add_notice(  $jazzcash_response->pp_ResponseMessage, 'error' );
+		}
+
+		if ( is_wp_error( $response )) 
 		{
 			$error_message = $response->get_error_message();
-			echo "Something went wrong: $error_message";
+			wc_add_notice(  'Something went wrong: '.$response->get_error_message(), 'error' );
 		} 
 		else 
 		{
 			echo 'Response:<pre>';
 			print_r( $response );
+			print_r($jazzcash_response);
 			echo '</pre>';
 		}
 		if( !is_wp_error( $response ) ) 
@@ -296,14 +302,14 @@ class JazzCash_WC_Payment_Gateway extends WC_Payment_Gateway
 	*/
 	function jazzcash_wc_checkout_field_validation() 
 	{
-		if ( $_POST['payment_method'] === 'jazzcash-wc-payment-gateway' && isset($_POST['phone_number']) && empty($_POST['cnic']) )
+		if ( $_POST['payment_method'] == 'jazzcash-wc-payment-gateway')
 		{
-			if(!$_POST['phone_number'] || empty($_POST['phone_number']))
+			if(empty($_POST['phone_number']))
 			{
-				wc_add_notice( __( 'Please enter your jazzcash account phone number.' ), 'error' );
+				wc_add_notice( __( 'Please enter your jazzcash account number.' ), 'error' );
 				return false;
 			}
-			if(!$_POST['cnic'] || $_POST['cnic'] == '')
+			if(empty($_POST['cnic']))
 			{
 				wc_add_notice( __( 'Please enter your last 6 digits of CNIC.' ), 'error' );
 				return false;
