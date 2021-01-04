@@ -6,15 +6,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class JazzCash_WC_Payment_Gateway extends WC_Payment_Gateway 
 {
-	public $type = 'MPAY'; 
+	protected $type = 'MPAY'; 
 
-	public $test_endpoint = 'https://sandbox.jazzcash.com.pk/ApplicationAPI/API/2.0/Purchase/DoMWalletTransaction';
+	protected $test_endpoint = 'https://sandbox.jazzcash.com.pk/ApplicationAPI/API/2.0/Purchase/DoMWalletTransaction';
 	
-	public $live_endpoint = 'https://production.jazzcash.com.pk/ApplicationAPI/API/2.0/Purchase/DoMWalletTransaction';
+	protected $live_endpoint = 'https://production.jazzcash.com.pk/ApplicationAPI/API/2.0/Purchase/DoMWalletTransaction';
 	
-	public $jazzcash_mobile_account;
+	protected $jazzcash_mobile_account;
 	
-	public $jazzcash_cnic;
+	protected $jazzcash_cnic;
+
 
 	public function __construct()
     {
@@ -45,6 +46,24 @@ class JazzCash_WC_Payment_Gateway extends WC_Payment_Gateway
 		add_action('woocommerce_update_options_payment_gateways_' . $this->id, array($this,
 		'process_admin_options'));
 		add_action('woocommerce_after_checkout_validation', array($this,'jazzcash_wc_checkout_field_validation'));
+		add_action( 'woocommerce_admin_order_data_after_order_details', array($this, 'jazzcash_wc_display_order_data_in_admin') );
+		add_action('woocommerce_checkout_update_order_meta', array($this, 'jazzcash_wc_custom_checkout_field_update_order_meta'));
+					
+	}
+	// display the extra data in the order admin panel
+	function jazzcash_wc_display_order_data_in_admin( $order )
+	{  
+		if(get_post_meta( $order->get_id(), 'jazzcash_mobile_account', true ))
+		{
+		?>
+		<div class="order_data_column">
+			<h4><?php _e( 'Paid Account' ); ?>:</h4>
+			<?php 
+				echo '<p><strong>' . __( 'Mobile Account' ) . ':</strong> ' . get_post_meta( $order->get_id(), 'jazzcash_mobile_account', true ) . '</p>';
+				echo '<p><strong>' . __( 'Cnic' ) . '</strong> <small>(Last 6 Digits)</small>: ' . get_post_meta( $order->get_id(), 'jazzcash_cnic', true ) . '</p>'; ?>
+		</div>
+		<?php
+		} 
 	}
 
 	public function process_payment( $order_id ) 
@@ -52,7 +71,6 @@ class JazzCash_WC_Payment_Gateway extends WC_Payment_Gateway
 		global $woocommerce;
 		$customer_order = new WC_Order($order_id);
 		
-		$_ActionURL     = $this->actionURL;
 		$_MerchantID    = $this->merchant_id;
 		$_Password      = $this->password;
 		$_ReturnURL     = $this->return_url;
@@ -75,14 +93,10 @@ class JazzCash_WC_Payment_Gateway extends WC_Payment_Gateway
 		$_AmtSplitArray = explode('.', $_AmountTmp);
 		$_FormattedAmount = $_AmtSplitArray[0];
 		
-		$this->jazzcash_mobile_account = $_PhoneNumber;
-		$this->jazzcash_cnic = $_CnicNumber;
-		
 		date_default_timezone_set("Asia/karachi");
 		$DateTime       = new DateTime();
 		$_TxnRefNumber_WM  = "T" . $DateTime->format('YmdHisu');
 		$_TxnRefNumber = substr($_TxnRefNumber_WM, 0, -3); // TxnRefNumber with mili seconds (updated)
-
 		
 		$_TxnDateTime   = $DateTime->format('YmdHis');
 		$ExpiryDateTime = $DateTime;
@@ -162,13 +176,12 @@ class JazzCash_WC_Payment_Gateway extends WC_Payment_Gateway
 		{
 			if (wp_remote_retrieve_response_code($response) ==  200) 
 			{
+				
 				$customer_order->payment_complete();
 				$customer_order->reduce_order_stock();
 		
 				$customer_order->add_order_note( 'Hey, your order is paid! Thank you!', true );
-				
-				add_action( 'woocommerce_checkout_update_order_meta', array($this, 'jazzcash_wc_checkout_field_update_order_meta') );
-				
+	
 				$woocommerce->cart->empty_cart();
 		
 			   return array(
@@ -190,11 +203,12 @@ class JazzCash_WC_Payment_Gateway extends WC_Payment_Gateway
 		}   
 	}
 	
-	function jazzcash_wc_checkout_field_update_order_meta( $order_id ) 
+	function jazzcash_wc_custom_checkout_field_update_order_meta($order_id)
 	{
-		add_post_meta( $order_id, 'jazzcash_mobile_account', sanitize_text_field( $this->jazzcash_mobile_account ) );
-		add_post_meta( $order_id, 'jazzcash_cnic', sanitize_text_field( $this->jazzcash_cnic ) );
+		update_post_meta( $order_id, 'jazzcash_mobile_account', sanitize_text_field($_POST['phone_number']) );
+		update_post_meta( $order_id, 'jazzcash_cnic', sanitize_text_field($_POST['cnic']) );
 	}
+
 	public function init_form_fields()
 	{
 		$this->form_fields = array(

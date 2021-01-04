@@ -18,8 +18,12 @@ You can test and let me know the issues, so we can make this plugin easy to inst
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
-
 Please make sure to update tests as appropriate.
+
+## Credits:
+```jazzcash-wc-payment-gateway``` makes use of the following JazzCash Official WordPress plugin:
+
+[https://wordpress.org/plugins/jazzcash-woocommerce-gateway/](https://wordpress.org/plugins/jazzcash-woocommerce-gateway/)
 
 ## License
 [MIT](https://choosealicense.com/licenses/mit/)

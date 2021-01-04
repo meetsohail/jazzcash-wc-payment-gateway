@@ -110,5 +110,3 @@ class JazzCash_Woocommerce_Payment_Gateway
     
 }
 new JazzCash_Woocommerce_Payment_Gateway();
-
- 

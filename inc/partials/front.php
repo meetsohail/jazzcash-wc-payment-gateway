@@ -32,7 +32,7 @@
                 </div>
                 <div class="footer ElementsModal--footer-text">
                     By purchasing this, you agree to JazzCash
-                    <a class="ElementsModal--footer-text" href="wordpress">Terms and Conditions.</a>
+                    <a class="ElementsModal--footer-text" href="https://developer.jazzcash.com.pk/store/site/pages/terms&cond.jag">Terms and Conditions.</a>
                 </div>
             </div>
         </div>
