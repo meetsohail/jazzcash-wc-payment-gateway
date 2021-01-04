@@ -1,5 +1,4 @@
 <?php 
-
 /**
  * Plugin Name:       JazzCash - WC Payment GateWay
  * Plugin URI:        https://github.com/meetsohail/jazzcash-wc-payment-gateway
