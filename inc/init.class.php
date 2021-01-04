@@ -7,10 +7,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 class JazzCash_WC_Payment_Gateway extends WC_Payment_Gateway 
 {
 	public $type = 'MPAY'; 
-	public $test_endpoint = 'https://sandbox.jazzcash.com.pk/ApplicationAPI/API/2.0/Purchase/DoMWalletTransaction';
-	public $live_endpoint = 'https://production.jazzcash.com.pk/ApplicationAPI/API/2.0/Purchase/DoMWalletTransaction';
 
-    public function __construct()
+	public $test_endpoint = 'https://sandbox.jazzcash.com.pk/ApplicationAPI/API/2.0/Purchase/DoMWalletTransaction';
+	
+	public $live_endpoint = 'https://production.jazzcash.com.pk/ApplicationAPI/API/2.0/Purchase/DoMWalletTransaction';
+	
+	public $jazzcash_mobile_account;
+	
+	public $jazzcash_cnic;
+
+	public function __construct()
     {
 		$this->id = JAZZCASH_ID;
 		$this->icon = JAZZCASH_DIR_PATH_IMAGES."jazzcash-logo-200x200.png";
@@ -69,6 +75,8 @@ class JazzCash_WC_Payment_Gateway extends WC_Payment_Gateway
 		$_AmtSplitArray = explode('.', $_AmountTmp);
 		$_FormattedAmount = $_AmtSplitArray[0];
 		
+		$this->jazzcash_mobile_account = $_PhoneNumber;
+		$this->jazzcash_cnic = $_CnicNumber;
 		
 		date_default_timezone_set("Asia/karachi");
 		$DateTime       = new DateTime();
@@ -158,7 +166,9 @@ class JazzCash_WC_Payment_Gateway extends WC_Payment_Gateway
 				$customer_order->reduce_order_stock();
 		
 				$customer_order->add_order_note( 'Hey, your order is paid! Thank you!', true );
-				// $customer_order->add_meta
+				
+				add_action( 'woocommerce_checkout_update_order_meta', array($this, 'jazzcash_wc_checkout_field_update_order_meta') );
+				
 				$woocommerce->cart->empty_cart();
 		
 			   return array(
@@ -180,6 +190,11 @@ class JazzCash_WC_Payment_Gateway extends WC_Payment_Gateway
 		}   
 	}
 	
+	function jazzcash_wc_checkout_field_update_order_meta( $order_id ) 
+	{
+		add_post_meta( $order_id, 'jazzcash_mobile_account', sanitize_text_field( $this->jazzcash_mobile_account ) );
+		add_post_meta( $order_id, 'jazzcash_cnic', sanitize_text_field( $this->jazzcash_cnic ) );
+	}
 	public function init_form_fields()
 	{
 		$this->form_fields = array(
