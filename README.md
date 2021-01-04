@@ -7,7 +7,7 @@
 </p>
 
 ## Installation
-Download ```zip``` and directly upload to your [WordPress](https://wordpress.org) website Plugin and activate it.
+Download ```zip``` and directly upload into your [WordPress](https://wordpress.org) website plugins and activate it.
 
 ## Usage
 You can test and let me know the issues, so we can make this plugin easy to install and access [JazzCash Payment GateWay](https://sandbox.jazzcash.com.pk/Sandbox) on WooCommerce websites in Pakistan.
