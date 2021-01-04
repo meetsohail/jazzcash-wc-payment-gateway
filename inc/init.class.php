@@ -272,9 +272,11 @@ class JazzCash_WC_Payment_Gateway extends WC_Payment_Gateway
 		}
 		if($this->testmode)
 		{
-			echo "<span class='jazzcash_alert jazzcash_alert-danger'>Test Mode has been enabled!</span>";
-			echo "<h4>Test JazzCash Mobile Accounts!</h4>";
-			echo '<table class="gatewayResponseCodesTable">
+			if(!empty($this->merchant_id) && !empty($this->password) && !empty($this->integenty_salt))
+			{
+				echo "<span class='jazzcash_alert jazzcash_alert-danger'>Test Mode has been enabled!</span>";
+				echo "<h4>Test JazzCash Mobile Accounts!</h4>";
+				echo '<table class="gatewayResponseCodesTable">
 					<tbody>
 						<tr>
 							<th>Mobile Number</th>
@@ -298,17 +300,15 @@ class JazzCash_WC_Payment_Gateway extends WC_Payment_Gateway
 						</tr>
 					</tbody>
 				</table>';
-		}
-		$plugins_url = plugins_url();
-		$my_plugin = $plugins_url . '/jazzcash-woocommerce-gateway';
-		global $woocommerce;
-		if(!empty($this->merchant_id) && !empty($this->password) && !empty($this->integenty_salt))
-		{
-			include_once(JAZZCASH_DIR_PATH_INC.'partials/front.php');
-		}
-		else
-		{
-			echo "<span class='jazzcash_alert jazzcash_alert-danger'>Please Enter Merchant Account details!</span>";
+				$plugins_url = plugins_url();
+				$my_plugin = $plugins_url . '/jazzcash-woocommerce-gateway';
+				global $woocommerce;
+				include_once(JAZZCASH_DIR_PATH_INC.'partials/front.php');
+			}
+			else
+			{
+				echo "<span class='jazzcash_alert jazzcash_alert-danger'>Please Enter Merchant Account details!</span>";
+			}
 		}
 	}
 	
