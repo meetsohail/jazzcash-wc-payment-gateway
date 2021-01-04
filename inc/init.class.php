@@ -302,7 +302,14 @@ class JazzCash_WC_Payment_Gateway extends WC_Payment_Gateway
 		$plugins_url = plugins_url();
 		$my_plugin = $plugins_url . '/jazzcash-woocommerce-gateway';
 		global $woocommerce;
-		include_once(JAZZCASH_DIR_PATH_INC.'partials/front.php');
+		if(!empty($this->merchant_id) && !empty($this->password) && !empty($this->integenty_salt))
+		{
+			include_once(JAZZCASH_DIR_PATH_INC.'partials/front.php');
+		}
+		else
+		{
+			echo "<span class='jazzcash_alert jazzcash_alert-danger'>Please Enter Merchant Account details!</span>";
+		}
 	}
 	
 	function jazzcash_wc_adding_scripts() 
