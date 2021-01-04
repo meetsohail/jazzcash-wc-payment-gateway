@@ -176,7 +176,7 @@ class JazzCash_WC_Payment_Gateway extends WC_Payment_Gateway
 				$customer_order->reduce_order_stock();
 		
 				$customer_order->add_order_note( __('Hey, your order is paid! Thank you!'), true );
-	
+				$customer_order->update_meta_data( 'jazzcash_ref_no', $jazzcash_response->pp_TxnRefNo );
 				$woocommerce->cart->empty_cart();
 		
 			   return array(

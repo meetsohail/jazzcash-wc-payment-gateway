@@ -2,7 +2,7 @@
 
 /**
  * Plugin Name:       JazzCash - WC Payment GateWay
- * Plugin URI:        https://example.com/plugins/the-basics/
+ * Plugin URI:        https://github.com/meetsohail/jazzcash-wc-payment-gateway
  * Description:       JazzCash WordPress Payment Gateway plugin.
  * Version:           1.0
  * Requires at least: 5.2
